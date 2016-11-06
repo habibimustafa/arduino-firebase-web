@@ -20,5 +20,6 @@ Example client application for displaying sensor value from arduino firebase dat
 # References
  - http://dirakit.com
  - https://github.com/googlesamples/firebase-arduino
+ - https://github.com/googlesamples/firebase-arduino/tree/master/examples/FirebaseDemo_ESP8266 
  - https://firebase.google.com/docs/web/setup
  - https://firebase.google.com/docs/database/web/start
