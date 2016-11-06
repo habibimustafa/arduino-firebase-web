@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Firebase Client</title>
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <style>
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch input {display:none;}
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/3.5.3/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: '<your-api-key>',
+        authDomain: '<your-auth-domain>',
+        databaseURL: '<your-database-url>',
+        storageBucket: '<your-storage-bucket>'
+      };
+      firebase.initializeApp(config);
+
+      // Get a reference to the database service
+      var db = firebase.database();
+
+      var sunlight = db.ref('sunlight');
+      sunlight.on('value', function(snapshot) {
+        console.log("sunlight: "+snapshot.val());
+        move(document.querySelector("#sunlight > div"), snapshot.val());
+      });
+
+      var pushbutton = db.ref('pushbutton');
+      pushbutton.on('value', function(snapshot) {
+        console.log("pushbutton: "+snapshot.val());
+        document.querySelector("#pushbutton > input").checked = snapshot.val();
+      });
+
+      var redlight = db.ref('redlight');
+      redlight.on('value', function(snapshot) {
+        console.log("redlight: "+snapshot.val());
+        if(snapshot.val()) document.querySelector("#redlight").style.background = 'rgb(255, 100, 100)';
+        if(!snapshot.val()) document.querySelector("#redlight").style.background = 'transparent';
+      });
+
+      function move(elem, val) {
+          var width = parseInt(elem.style.width);
+          var id = setInterval(frame, 10);
+          function frame() {
+              if (width == val) {
+                  clearInterval(id);
+              } else {
+                  if(val > width) width++;
+                  else if(val < width) width--;
+                  if(width >= 100 || width <= 0) clearInterval(id);
+
+                  elem.style.width = width + '%';
+                  elem.querySelector("div").innerText = elem.style.width;
+              }
+          }
+      }
+      </script>
+  </head>
+  <body style="margin:2em;">
+    <h3>Sunlight</h3>
+    <div id="sunlight" class="w3-progress-container w3-pale-blue">
+      <div class="w3-progressbar w3-blue" style="width:35%">
+        <div class="w3-center w3-text-white">35%</div>
+      </div>
+    </div>
+
+    <h3>Push Button</h3>
+    <label id="pushbutton" class="switch">
+      <input type="checkbox" onclick="pushbutton.set(+this.checked)">
+      <div class="slider round"></div>
+    </label>
+
+    <h3>Red Light</h3>
+    <div id="redlight" style="width:80px;height:80px;border:1px solid red"></div>
+  </body>
+</html>
