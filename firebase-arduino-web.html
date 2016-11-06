@@ -79,7 +79,7 @@
       var sunlight = db.ref('sunlight');
       sunlight.on('value', function(snapshot) {
         console.log("sunlight: "+snapshot.val());
-        move(document.querySelector("#sunlight > div"), snapshot.val());
+        move(document.querySelector("#sunlight > div"), parseInt((snapshot.val()/1010)*100));
       });
 
       var pushbutton = db.ref('pushbutton');
@@ -93,6 +93,7 @@
         console.log("redlight: "+snapshot.val());
         if(snapshot.val()) document.querySelector("#redlight").style.background = 'rgb(255, 100, 100)';
         if(!snapshot.val()) document.querySelector("#redlight").style.background = 'transparent';
+        document.querySelector("#redlightbtn > input").checked = snapshot.val();
       });
 
       function move(elem, val) {
@@ -128,6 +129,11 @@
     </label>
 
     <h3>Red Light</h3>
+    <label id="redlightbtn" class="switch">
+      <input type="checkbox" onclick="redlight.set(+this.checked)">
+      <div class="slider round"></div>
+    </label>
     <div id="redlight" style="width:80px;height:80px;border:1px solid red"></div>
+    <br/>
   </body>
 </html>
